@@ -1,0 +1,29 @@
+<form action="http://localhost:8080/start_game" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-lg-4">
+            <p>Доступные вам сценарии: </p>
+            <div class="list-group mb-3" id="list-tab" role="tablist">
+                {{ for scenarioName }}
+                <input type="radio" name="scenarioId" value="{{ id }}" id="scenarioIdInput{{ id }}" style="display: none"/>
+                <button for="scenarioIdInput{{ id }}" class="list-group-item list-group-item-action" id="list-{{ id }}-list" href="#list-{{ id }}" aria-controls="{{ id }}" role="tab" data-toggle="list">{{ name }}</button>
+                {{ end for }}
+            </div>
+            <button type="submit" class="btn btn-primary">Начать игру</button>
+        </div>
+        <div class="col-lg-8">
+            <p>Описание: </p>
+            <div class="tab-content" id="nav-tabContent">
+                {{ for scenarioDescription }}
+                <div class="tab-pane fade" id="list-{{ id }}" role="tabpanel" aria-labelledby="list-{{ id }}-list" style="white-space: pre-line;">{{ description }}</div>
+                {{ end for }}
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+  $(".list-group-item").on('click', function() {
+    $("input:radio").attr('checked', false);
+    $("#" + $(this).attr("for")).attr('checked', true);
+  });
+</script>

@@ -1,0 +1,12 @@
+[0m[[0m[0mdebug[0m] [0m[0mAcquiring lock on file /home/semyon/tinkoff/cw_drpg/project/target/.sbt-compilation-infos/cw_drpg-compile/.sbt-idea-lock ...[0m
+[0m[[0m[31merror[0m] [0m[0m/home/semyon/tinkoff/cw_drpg/src/main/scala/Auth.scala:2:10: not found: value de[0m
+[0m[[0m[31merror[0m] [0m[0m  import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._[0m
+[0m[[0m[31merror[0m] [0m[0m         ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/semyon/tinkoff/cw_drpg/src/main/scala/Auth.scala:3:13: object circe is not a member of package io[0m
+[0m[[0m[31merror[0m] [0m[0m  import io.circe.generic.auto._[0m
+[0m[[0m[31merror[0m] [0m[0m            ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/semyon/tinkoff/cw_drpg/src/main/scala/Auth.scala:4:10: not found: value authentikat[0m
+[0m[[0m[31merror[0m] [0m[0m  import authentikat.jwt._[0m
+[0m[[0m[31merror[0m] [0m[0m         ^[0m
+[0m[[0m[31merror[0m] [0m[0mthree errors found[0m
+[0m[[0m[0mdebug[0m] [0m[0mReleasing lock on file /home/semyon/tinkoff/cw_drpg/project/target/.sbt-compilation-infos/cw_drpg-compile/.sbt-idea-lock.[0m

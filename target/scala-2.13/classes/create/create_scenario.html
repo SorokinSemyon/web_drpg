@@ -1,0 +1,44 @@
+<form action="http://localhost:8080/save_scenario" method="post" enctype="multipart/form-data">
+<div class="mb-3">
+    <label for="nameInput" class="form-label">Название</label>
+    <input type="text" class="form-control" id="nameInput" name="name" placeholder="Текст" required="required">
+</div>
+
+<div class="mb-3">
+    <label for="descriptionInput" class="form-label">Описание</label>
+    <textarea class="form-control" id="descriptionInput" rows="3" name="description" placeholder="Текст" required="required"></textarea>
+</div>
+
+<div class="row mb-3">
+    <div class="col mb-3">
+        <label for="numberOfRolesInput" class="form-label"><nobr>Количество персонажей</nobr></label>
+        <input type="number" class="form-control" id="numberOfRolesInput" name="numberOfRoles" min="1" placeholder="Число" required="required">
+    </div>
+
+    <div class="col mb-3">
+        <label for="numberOfRoundsInput" class="form-label"><nobr>Количество раундов</nobr></label>
+        <input type="number" class="form-control" id="numberOfRoundsInput" name="numberOfRounds" min="1" placeholder="Число" required="required">
+    </div>
+
+    <div class="col mb-3">
+        <label for="roundDurationInput" class="form-label"><nobr>Продолжительность раунда</nobr></label>
+        <input type="number" class="form-control" id="roundDurationInput" min="1" name="roundDuration" placeholder="В минутах" required="required">
+    </div>
+
+    <div class="col mb-3">
+        <label for="votesToLoseInput" class="form-label"><nobr>Количество голосов обвинения</nobr></label>
+        <input type="number" class="form-control" id="votesToLoseInput" min="1" name="votesToLose" placeholder="Число голосов для вылета" required="required">
+    </div>
+</div>
+
+<div class="mb-3">
+    <label for="peopleWinMsgInput" class="form-label">Сообщение при победе мирных</label>
+    <textarea class="form-control" id="peopleWinMsgInput" name="peopleWinMsg" rows="3" placeholder="Текст" required="required"></textarea>
+</div>
+
+<div class="mb-3">
+    <label for="killerWinMsgInput" class="form-label">Сообщение при победе убийцы</label>
+    <textarea class="form-control" id="killerWinMsgInput" name="killerWinMsg" rows="3" placeholder="Текст" required="required"></textarea>
+</div>
+<button type="submit" class="btn btn-primary">Создать</button>
+</form>

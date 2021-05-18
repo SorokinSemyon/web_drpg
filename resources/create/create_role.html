@@ -1,0 +1,23 @@
+<a class="btn btn-primary mb-3"> Сценарий: {{ scenarioName }} </a>
+<form onsubmit="get_action(this);" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="nameInput" class="form-label">Имя</label>
+        <input type="text" class="form-control" id="nameInput" name="name" placeholder="Текст" required="required">
+    </div>
+
+    <div class="mb-3">
+        <label for="descriptionInput" class="form-label">Описание</label>
+        <textarea class="form-control" id="descriptionInput" rows="3" name="description" placeholder="Текст" required="required"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="imageUrlInput" class="form-label">Изображение персонажа</label>
+        <input type="text" class="form-control" id="imageUrlInput" name="imageUrl" placeholder="Ссылка" required="required">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<script>
+    function get_action(form) {
+        form.action = document.location.href = 'http://localhost:8080/save_role/' + window.location.href.split("/").pop()
+    }
+</script>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"
+            integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <title>Chat</title>
+</head>
+<body>
+<textarea id="message"></textarea>
+<button id="send">Send</button>
+<script>
+    var worker = new SharedWorker("shared.js");
+    worker.port.addEventListener("message", function(e) {
+        console.log("Got message: " + e.data);
+        $("#messages").prepend($("<li>" + event.data + "</li>"));
+    }, false);
+    worker.port.start();
+    worker.port.postMessage("start");
+
+    $send.on('click', function() {
+         var text = curUser.responseText + ": " + $message.val();
+        $("#messages").val("");
+         worker.port.postMessage(text);
+    })
+
+</script>
+</body>
+</html>

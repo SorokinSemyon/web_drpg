@@ -1,0 +1,24 @@
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(compile, None, None)[0m
+[0m[[0m[33mwarn[0m] [0m[0mbuild source files have changed[0m
+[0m[[0m[33mwarn[0m] [0m[0mmodified files: [0m
+[0m[[0m[33mwarn[0m] [0m[0m  /home/semyon/tinkoff/cw_drpg/build.sbt[0m
+[0m[[0m[33mwarn[0m] [0m[0mApply these changes by running `reload`.[0m
+[0m[[0m[33mwarn[0m] [0m[0mAutomatically reload the build when source changes are detected by setting `Global / onChangedBuildSource := ReloadOnSourceChanges`.[0m
+[0m[[0m[33mwarn[0m] [0m[0mDisable this warning by setting `Global / onChangedBuildSource := IgnoreSourceChanges`.[0m
+[0m[[0m[0mdebug[0m] [0m[0mEvaluating tasks: Compile / compile[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning task... Cancel: Signal, check cycles: false, forcegc: true[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 5 Scala sources to /home/semyon/tinkoff/cw_drpg/target/scala-2.13/classes ...[0m
+[0m[[0m[31merror[0m] [0m[0m/home/semyon/tinkoff/cw_drpg/src/main/scala/Auth.scala:2:10: not found: value de[0m
+[0m[[0m[31merror[0m] [0m[0m  import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._[0m
+[0m[[0m[31merror[0m] [0m[0m         ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/semyon/tinkoff/cw_drpg/src/main/scala/Auth.scala:3:13: object circe is not a member of package io[0m
+[0m[[0m[31merror[0m] [0m[0m  import io.circe.generic.auto._[0m
+[0m[[0m[31merror[0m] [0m[0m            ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/semyon/tinkoff/cw_drpg/src/main/scala/Auth.scala:4:10: not found: value authentikat[0m
+[0m[[0m[31merror[0m] [0m[0m  import authentikat.jwt._[0m
+[0m[[0m[31merror[0m] [0m[0m         ^[0m
+[0m[[0m[31merror[0m] [0m[0mthree errors found[0m
+[0m[[0m[0mdebug[0m] [0m[0mForcing garbage collection...[0m
+[0m[[0m[31merror[0m] [0m[0m(Compile / [31mcompileIncremental[0m) Compilation failed[0m
+[0m[[0m[31merror[0m] [0m[0mTotal time: 1 s, completed Apr 25, 2021, 10:20:08 PM[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(idea-shell, None, None)[0m

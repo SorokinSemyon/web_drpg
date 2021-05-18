@@ -1,0 +1,289 @@
+<div class="row">
+    <div id="roleinfo" class="col-lg-4 mb-3" style="display: none">
+        <h2>Карточки истории</h2>
+        <div class="list-group mb-3 list-group-horizontal" id="list-tab1" role="tablist">
+        </div>
+        <div class="tab-content" id="nav-tabContent1">
+        </div>
+    </div>
+    <div class="col-lg-4 mb-3">
+        <div class="list-group mb-3" id="list-tab2" role="tablist">
+            <h2>Персонажи</h2>
+            {{ for roleName }}
+            <button class="list-group-item list-group-item-action" id="{{ id }}" href="#list-{{ id }}" aria-controls="{{ id }}" role="tab" data-toggle="list">{{ name }}</button>
+            {{ end for }}
+        </div>
+        <button class="btn btn-primary" id="send">Выбрать</button>
+        <h1 id="timer"></h1>
+    </div>
+    <div class="col-lg-4 mb-3">
+        <div class="tab-content" id="nav-tabContent2">
+            {{ for roleDescription }}
+            <div class="tab-pane fade" id="list-{{ id }}" role="tabpanel" aria-labelledby="{{ id }}">
+            <div class="card">
+                <img src="{{ imageUrl }}" class="card-img-top" style="width: 200px; ">
+                <div class="card-body">
+                    <h5 class="card-title"> {{ name }} </h5>
+                    <p class="card-text"> {{ description }} </p>
+                    <p class="card-text"> {{ description }} </p>
+                </div>
+            </div>
+            </div>
+            {{ end for }}
+        </div>
+    </div>
+</div>
+<p id="message" style="display: none"></p>
+
+<script language="javascript">
+   var $send = $("#send");
+   var timer_func;
+
+   function stop_discussion() {
+        $.ajax({ url: "http://localhost:8080/stop_discussion/{{ gameId }}" });
+        state = "Voting";
+        $(".list-group-item:contains(' Хочет закончить обсуждение')").each(function() {
+                            $(this).text($(this).text().replace(' Хочет закончить обсуждение', "")).removeClass("list-group-item-success");
+                        });
+        $send.attr("style", "");
+        $send.text("Проголосовать");
+        clearInterval(timer_func);
+        $("#timer").text("");
+   }
+
+   function get_state() {
+        return $.ajax({ type: "GET",
+                        url: "http://localhost:8080/game_state/{{ gameId }}",
+                        async: false
+                      }).responseText;
+   };
+
+    function users_message() {
+    return $.ajax({ type: "GET",
+                        url: "http://localhost:8080/users_message/{{ gameId }}",
+                        async: false
+                      });
+    }
+
+    function role_info_json() {
+     $.getJSON('/user_role_info/{{ gameId }}', function(json) {
+        $.each(json, function(index, data) {
+            $("#list-tab1").append($('<button/>')
+                .attr('class', 'list-group-item list-group-item-action')
+                .attr('id', "roleinfo" + data.roundNumber)
+                .attr('href', '#list-1-' + data.roundNumber)
+                .attr('area-controls', data.roundNumber)
+                .attr('role', 'tab')
+                .attr('data-toggle', 'list')
+                .addClass("disabled")
+                .text(data.roundNumber)
+
+            );
+           $.get("http://localhost:8080/game_round/{{ gameId }}", function(data, status){
+               for (var i = 1; i <= parseInt(data); i++) {
+                    $("#roleinfo" + i).removeClass("disabled");
+               }
+           });
+            $("#nav-tabContent1").append($('<div>')
+                .attr('class', 'tab-pane fade')
+                .attr('id', 'list-1-' + data.roundNumber)
+                .attr('role', 'tabpanel')
+                .attr('aria-labelledby', data.roundNumber)
+                .append($('<p>').attr('style', 'white-space: pre-line').text(data.info))
+            );
+        });
+        $("#roleinfo1").removeClass("disabled");
+        $("#roleinfo1").click();
+    });
+    };
+
+    function setScreenByState() {
+       if (state == "Choose role") {
+            users_message().done(function (json) {
+                $.each(jQuery.parseJSON(json), function(who, data) {
+                    if (who == $currentLogin.text()) {
+                        $("#" + data).click();
+                        $("#list-tab2").css("pointer-events", "none");
+                        $("#message").text(data);
+                        $send.text("Отменить выбор");
+                    }
+                    $("#" + data).text($("#" + data).text() + " (" + who + ")");
+                    $("#" + data).addClass("disabled");
+                });
+            });
+       }
+
+       else if (state == "Voting" || state == "Read") {
+           role_info_json();
+           $("#roleinfo").attr("style", "");
+            $(".disabled").each(function() {
+                $(this).removeClass("disabled");
+            });
+            $("#list-tab2").css("pointer-events", "auto");
+
+            $.getJSON('/game_roles/{{ gameId }}', function(json) {
+                $.each(json, function(index, data) {
+                    $("#" + data[0].id).text(data[0].name + " (" + index + ")");
+                });
+            });
+
+            if (state == "Voting") {
+                $send.text("Проголосовать");
+                users_message().done(function (json) {
+                    $.each(jQuery.parseJSON(json), function(who, data) {
+                        $(".list-group-item:contains('" + who + "')").append(" Проголосовал").addClass("list-group-item-success");
+                    });
+                });
+            }
+
+            if (state == "Read") {
+                $send.text("Начать обсуждение");
+            }
+       }
+       else if (state == "Discuss") {
+       }
+    }
+
+    var state = get_state();
+    setScreenByState();
+
+
+     var connection;
+     function startWebsocket() {
+         connection = new WebSocket('ws://test:1234@localhost:8080/wschat/{{ gameId }}');
+
+        connection.onopen = function () {
+            $send.on('click', function() {
+                var text = $currentLogin.text() + ": " + $("#message").text();
+                if ($send.text() == "Выбрать") {
+                   connection.send(text);
+                   $("#list-tab2").css("pointer-events", "none");
+                   $send.text("Отменить выбор");
+                }
+                else if ($send.text() == "Отменить выбор") {
+                   $send.text("Выбрать");
+                   $("#list-tab2").css("pointer-events", "auto");
+                   connection.send("!" + text);
+                }
+                else {
+                   $("#list-tab2").css("pointer-events", "auto");
+                   connection.send(text);
+                   $send.attr("style", "display: none");
+                }
+           })
+        };
+
+        connection.onerror = function (error) { console.log('WebSocket Error ', error) };
+
+        connection.onclose = function() {
+            connection = null;
+            setTimeout(startWebsocket, 5000);
+        };
+
+        connection.onmessage = function (event) {
+           var split = event.data.split(": ");
+           var who = split[0];
+           var data = split[1];
+           if (state == "Choose role") {
+               if (who[0] != "!") {
+               $("#" + data).text($("#" + data).text() + " (" + who + ")");
+               $("#" + data).addClass("disabled");
+               }
+               else {
+                  $("#" + data).text($("#" + data).text().split(" (")[0]);
+                  $("#" + data).removeClass("disabled");
+               }
+               if ($("#" + data).hasClass("active")){
+                   $("#" + data).removeClass("active");
+               }
+           }
+           else if (state == "Read") {
+               $(".list-group-item:contains('" + who + "')").append(" Готов к обсуждению").addClass("list-group-item-success");
+           }
+           else if (state == "Voting") {
+               $(".list-group-item:contains('" + who + "')").append(" Проголосовал").addClass("list-group-item-success");
+           }
+           else if (state == "Discuss") {
+               $(".list-group-item:contains('" + who + "')").append(" Хочет закончить обсуждение").addClass("list-group-item-success");
+           }
+
+           users_message().done(function (json) {
+               if (Object.keys(jQuery.parseJSON(json)).length == parseInt({{ numberOfRoles }})){
+                   if (state == "Choose role") {
+                       $.ajax({
+                           url: "http://localhost:8080/save_roles/{{ gameId }}"
+                       }).done(function() {
+                           state = get_state();
+                           setScreenByState();
+                       });
+                   }
+                   else if (state == "Read") {
+                        $send.text("Закончить обсуждение");
+                        $send.attr("style", "");
+                        $(".list-group-item:contains(' Готов к обсуждению')").each(function() {
+                            $(this).text($(this).text().replace(' Готов к обсуждению', "")).removeClass("list-group-item-success");
+                        });
+
+                        function mod(n, m) {
+                            return ((n % m) + m) % m;
+                        };
+
+                        $.get("http://localhost:8080/game_timer/{{ gameId }}", function(data, status){
+                            state = get_state();
+                            timer_func = setInterval(function() {
+                            var final_minutes = data.split(",")[0];
+                            var final_seconds = data.split(",")[1];
+                            var d = new Date();
+                            var cur_minutes = d.getMinutes();
+                            var cur_seconds = d.getSeconds();
+                            var d_minutes = mod((final_minutes - cur_minutes), 60);
+                            var d_seconds = mod((final_seconds - cur_seconds), 60);
+                            console.log(cur_minutes);
+                            console.log(cur_seconds);
+                            console.log(final_minutes);
+                            console.log(final_seconds);
+                            $("#timer").text(d_minutes + ":" + ('0' + d_seconds).slice(-2));
+                            if (cur_minutes == final_minutes && cur_seconds > final_seconds) {
+                                stop_discussion();
+                            }
+                        }, 1000);
+                        });
+                   }
+                   else if (state == "Discuss") {
+                        stop_discussion();
+                   }
+                   else if (state == "Voting") {
+                       $.ajax({ url: "http://localhost:8080/voting/{{ gameId }}" });
+
+                           $(".list-group-item:contains('Проголосовал')").each(function() {
+                               $(this).text($(this).text().replace("Проголосовал", "")).removeClass("list-group-item-success");
+                           });
+                           $send.attr("style", "");
+
+                       $.get("http://localhost:8080/is_game_over/{{ gameId }}", function(data, status){
+                           console.log(data);
+                           if (data == "true") {
+                               window.location.href = "http://localhost:8080/game_over/{{ gameId }}";
+                           }
+                       });
+
+                       $.get("http://localhost:8080/game_round/{{ gameId }}", function(data, status){
+                           for (var i = 1; i <= parseInt(data); i++) {
+                                $("#roleinfo" + i).removeClass("disabled");
+                                $("#roleinfo" + i).click();
+                           }
+                           state = get_state();
+                           $send.text("Начать обсуждение");
+                       });
+                   }
+               }
+           });
+        };
+    };
+    startWebsocket();
+
+   $(".list-group-item").on('click', function() {
+    $("#message").text($(this).attr("id"));
+  });
+
+</script>
